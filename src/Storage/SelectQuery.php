@@ -569,7 +569,7 @@ class SelectQuery implements QueryInterface
         $originalLeftExpression = 'content.' . $filter->getKey();
         $valueWhere = $filter->getExpression();
 
-        $newLeftExpression = $this->getRegularFieldLeftExpression($valueAlias, $filter->getKey());
+        $newLeftExpression = $this->getRegularFieldLeftExpression($valueAlias, $filter->getKey(), $filter->getParameters());
 
         $valueWhere = str_replace($originalLeftExpression, $newLeftExpression, $valueWhere);
         $expr->add($valueWhere);
@@ -596,7 +596,7 @@ class SelectQuery implements QueryInterface
         return $expr->__toString();
     }
 
-    private function getRegularFieldLeftExpression(string $valueAlias, string $fieldName): string
+    private function getRegularFieldLeftExpression(string $valueAlias, string $fieldName, array $parameters = []): string
     {
         if ($this->utils->isFieldType($this, $fieldName, NumberField::TYPE) && $this->utils->hasCast()) {
             return $this->utils->getNumericCastExpression($valueAlias);
@@ -605,7 +605,11 @@ class SelectQuery implements QueryInterface
         if ($this->utils->isFieldType($this, $fieldName, SelectField::TYPE)) {
             // Do not use JSON_EXTRACT for select fields, because then only the first
             // item of the array is checked.
-            return $valueAlias;
+            dump($parameters);
+            dump($fieldName);
+//            dd($valueAlias);
+//            dd(JsonHelper::wrapJsonFunction($valueAlias, null, $this->em->getConnection()));
+//            return $valueAlias;
         }
 
         // LOWER() added to query to enable case insensitive search of JSON  values. Used in conjunction with converting $params of setParameter() to lowercase.

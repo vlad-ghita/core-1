@@ -33,7 +33,7 @@ class JsonHelper
                 $resultWhere = 'JSON_GET_TEXT(' . $where . ', 0)';
             } else {
                 // MySQL and SQLite
-                $resultWhere = 'JSON_EXTRACT(' . $where . ", '$[0]')";
+                $resultWhere = 'JSON_ARRAY(' . $where . ")";
             }
             $resultSlug = $slug;
         } else {

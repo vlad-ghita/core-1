@@ -76,6 +76,40 @@ class SelectQueryHandler
         $paginator = new Pagerfanta(new DoctrineORMAdapter($query, true, true));
         $paginator->setMaxPerPage($amountPerPage);
 
+        $dql = $query->getDQL();
+        dump($dql);
+
+        $dql = <<<START
+            SELECT content
+            FROM Bolt\Entity\Content content
+            LEFT JOIN content.fields fields_fruits
+            LEFT JOIN fields_fruits.translations translations_fruits
+            WHERE content.contentType = :ct0
+                AND (((JSON_ARRAY(translations_fruits.value) = :fruits_1
+                OR JSON_ARRAY(translations_fruits.value) = :fruits_2)
+                AND fields_fruits.parent IS NULL
+                AND fields_fruits.name = :field_fruits)
+                AND content.status = :status_1) ORDER BY content.publishedAt DESC
+START;
+
+        $dql = <<<START
+            SELECT content
+            FROM Bolt\Entity\Content content
+            LEFT JOIN content.fields fields_fruits
+            LEFT JOIN fields_fruits.translations translations_fruits
+            WHERE content.contentType = :ct0
+                AND (:fruits_1 IN (JSON_ARRAY(translations_fruits.value))
+                AND fields_fruits.parent IS NULL
+                AND fields_fruits.name = :field_fruits)
+                AND content.status = :status_1) ORDER BY content.publishedAt DESC
+START;
+
+//        $query->setDQL($dql);
+
+//        dd($query->getSQL());
+
+//        die;
+
         // If current page was not set explicitly.
         if ($page === null) {
             // If we don't have $request, we're likely not in a web context.

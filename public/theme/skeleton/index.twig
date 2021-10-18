@@ -2,6 +2,19 @@
 
 {% block main %}
 
+    {% setcontent dummies = 'dummies' where { fruits: 'one || 2'} printquery %}
+
+{#    {% setcontent dummies = 'dummies' where { fruits: 'one && four'} printquery %}#}
+
+{#    {% setcontent dummies = 'dummies' where { fruits: 'one'} printquery %}#}
+
+    {{ dump(dummies) }}
+
+    <hr>
+    {% for d in dummies %}
+        {{ d.id }} {{ d|title }}
+    {% endfor %}
+
     {% if record|default %}
 
         <h1>{{ record|title }}</h1>
@@ -26,5 +39,5 @@
 {% block aside %}
 
     {{ include('partials/_aside.twig') }}
-    
+
 {% endblock aside %}
