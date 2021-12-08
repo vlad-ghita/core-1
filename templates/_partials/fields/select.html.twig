@@ -7,9 +7,6 @@
      - multiple: A boolean to set whether or not we allow multiple selections
  #}
 
-{% if options is not defined %}
-    {% set options = select_options(field) %}
-{% endif %}
 
 {% if multiple is not defined %}
     {% set multiple = field.definition.get('multiple')|default ? 'true' : 'false' %}
@@ -24,8 +21,15 @@
 {% endif %}
 
 {% block field %}
+    {% if field is defined %}
+        {% dump('twig') %}
+        {% dump(field.getName()) %}
+    {% endif %}
+    {% if options is not defined %}
+        {% set options = select_options(field) %}
+    {% endif %}
     <editor-select
-        :classname="{{ ['wide-options ', class]|join|json_encode }}"
+        :classname="{{ "wide-options"|json_encode }}"
         :value="{{ value|json_encode }}"
         :name='{{ name|json_encode }}'
         :id='{{ id|json_encode }}'

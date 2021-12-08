@@ -204,7 +204,8 @@ class FieldExtension extends AbstractExtension
         }
 
         $values = $field->getOptions();
-
+dump('$values');
+dump($field);
         if (is_iterable($values)) {
             return $this->selectOptionsArray($field);
         }
@@ -251,6 +252,14 @@ class FieldExtension extends AbstractExtension
 
     private function selectOptionsContentType(Field $field): Collection
     {
+        dump('$field->getType()');
+        dump($field->getType());
+        dump('$field->getName()');
+        dump($field->getName());
+        dump('$field->getValue()');
+        dump($field->getValue());
+        dump('$field->getDefinition()');
+        dump($field->getDefinition());
         [ $contentTypeSlug, $format ] = explode('/', $field->getDefinition()->get('values'));
 
         $options = [];

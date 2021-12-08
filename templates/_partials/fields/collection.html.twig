@@ -13,7 +13,8 @@
 
     {# get the html for all collection field already in the database #}
     {% set existing_fields %}{{ macro.generate_collection_fields(field, field.value, record, false) }}{% endset %}
-
+    {% dump('existing_fields') %}
+    {% dump(existing_fields) %}
     {# get the html template for the collection fields defined in the field definition #}
     {% set templated_fields = "" %}
     {% if field.templates is defined %}

@@ -28,6 +28,7 @@ use Bolt\Security\ContentVoter;
 use Bolt\Utils\TranslationsManager;
 use Bolt\Validator\ContentValidatorInterface;
 use Carbon\Carbon;
+use Carbon\Traits\Creator;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\ORMInvalidArgumentException;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Entity;
@@ -440,16 +441,41 @@ class ContentEditController extends TwigAwareController implements BackendZoneIn
 
                 $collection = $this->getFieldToUpdate($content, $collectionName, $collectionDefinition);
 
+//                dump('$collectionName');
+//                dump($collectionName);
+//                dump('$collectionDefinition');
+//                dump($collectionDefinition);
+//                dump('$collectionItems');
+//                dump($collectionItems);
+//                dump('$collection');
+//                dump($collection);
                 foreach ($collectionItems as $name => $instances) {
                     // order field is only used to determine the order in which fields are submitted
                     if ($name === 'order') {
                         continue;
                     }
-
+//                    dump('$name');
+//                    dump($name);
+//                    dump('$collectionItems');
+//                    dump($collectionItems);
+//                    dump('$instances');
+//                    dump($instances);
                     $newFields = [];
                     foreach ($instances as $orderId => $value) {
+//                        dump('$orderId');
+//                        dump($orderId);
+//                        dump('$value');
+//                        dump($value);
                         $order = $orderArray[$orderId];
+                        // TODO: Replace 'module_set' by $name. $name = "module" while it should be "module_set". _set is being trimmed from the string
                         $fieldDefinition = $collection->getDefinition()->get('fields')->get($name);
+//                        dump('$collection->getDefinition()->get(\'fields\')');
+//                        dump($collection->getDefinition()->get('fields'));
+//                        dump('$fieldDefinition');
+//                        dump($fieldDefinition);
+//                        dump('$name');
+//                        dump($name);
+//                        die();
                         $field = FieldRepository::factory($fieldDefinition, $name);
                         // Note, $collection side is set by $collection->setValue() below
                         $field->setParent($collection);
@@ -510,9 +536,19 @@ class ContentEditController extends TwigAwareController implements BackendZoneIn
 
         if ($field instanceof SetField) {
             $children = [];
+//            dump('$value');
+//            dump($value);
             foreach ($value as $name => $svalue) {
                 $child = $field->getValueForEditor()[$name] ?? null;
-
+                dump('$name');
+                dump($name);
+//                if($name == "selected_pages") {
+//                    dump('$svalue');
+//                    dump($svalue);
+//                    dump('$svalue[\'file\']');
+//                    dump(isset($svalue['file']));
+//                    die();
+//                }
                 if (! $child) {
                     // Child has been removed from the definition.
                     continue;
@@ -524,6 +560,10 @@ class ContentEditController extends TwigAwareController implements BackendZoneIn
                 }
 
                 $child->setDefinition($child->getName(), $field->getDefinition()->get('fields')->get($child->getName()));
+                // If there is no image skip this item and continue with the next one in the collection
+                if(!isset($svalue['file']) && empty($svalue['file'])) {
+                    continue;
+                }
                 $this->updateField($child, $svalue, $locale);
                 $children[] = $child;
             }
@@ -539,6 +579,8 @@ class ContentEditController extends TwigAwareController implements BackendZoneIn
 
         // If the Field is MediaAwareInterface, link it to an existing Media Entity
         if ($field instanceof Field\MediaAwareInterface) {
+            dump('$field');
+            dump($field->getValue());
             $field->setLinkedMedia($this->mediaRepository);
         }
     }
